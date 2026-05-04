@@ -209,7 +209,7 @@ export function ClaimsClient() {
                     </p>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted">Click "Generate Fix" to get AI-powered resolution steps.</p>
+                  <p className="text-sm text-muted">Click &quot;Generate Fix&quot; to get AI-powered resolution steps.</p>
                 )}
               </Panel>
             </div>
