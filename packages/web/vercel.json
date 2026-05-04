@@ -1,0 +1,21 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": "@rxmind-clerk-publishable-key",
+    "CLERK_SECRET_KEY": "@rxmind-clerk-secret-key",
+    "ANTHROPIC_API_KEY": "@rxmind-anthropic-key",
+    "API_BASE_URL": "@rxmind-api-url",
+    "NEXT_PUBLIC_API_BASE_URL": "@rxmind-api-url-public"
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    }
+  ]
+}

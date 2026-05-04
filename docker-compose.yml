@@ -1,0 +1,62 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rxmind
+      POSTGRES_USER: rxmind
+      POSTGRES_PASSWORD: rxmind
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rxmind"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgresql://rxmind:rxmind@postgres:5432/rxmind
+      JWT_SECRET: dev_jwt_secret_change_in_prod
+      CORS_ORIGIN: http://localhost:3000
+    env_file:
+      - ./packages/api/.env
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./packages/api/src:/app/src
+    command: ["npm", "run", "dev"]
+
+  web:
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4000
+      API_BASE_URL: http://api:4000
+    env_file:
+      - ./packages/web/.env.local
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./packages/web/src:/app/src
+    command: ["npm", "run", "dev"]
+
+volumes:
+  postgres_data:
